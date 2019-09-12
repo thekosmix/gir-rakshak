@@ -1,1 +1,15 @@
-Gir - Rakshak
+<!-- index.html -->
+{{if .Success}}
+    <h1>Thanks for adding a new user with name {{ .name}} and number {{ .phoneNumber}}</h1>
+{{else}}
+    <h1>Add user</h1>
+    <form method="POST">
+        <label>Name:</label><br />
+        <input type="text" name="name"><br />
+        <label>Phone Number:</label><br />
+        <input type="text" name="phone-number"><br />
+        <label>Role:</label><br />
+        <input type="text" name="role"><br />
+        <input type="submit">
+    </form>
+{{end}}

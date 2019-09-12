@@ -4,6 +4,7 @@ import (
     "fmt"
     "net/http"
     "github.com/gorilla/mux"
+    "html/template"
     "database/sql"
     "log"
     "crypto/sha1"
@@ -13,11 +14,17 @@ import (
     _ "github.com/go-sql-driver/mysql"
 )
 
-type user struct {
-    id        int
+type Users struct {
+    id        int64
     phoneNumber  string
     name  string
     role  string
+}
+
+type AddUserResponse struct{ 
+    Success bool
+    name  string
+    phoneNumber  string
 }
 
 func main() {
@@ -30,6 +37,41 @@ func main() {
     if err := db.Ping(); err != nil {
         log.Fatal(err)
     }
+
+    tmpl := template.Must(template.ParseFiles("static/index.html"))
+
+    r.HandleFunc("/static/", func(w http.ResponseWriter, r *http.Request) {
+        if r.Method != http.MethodPost {
+            tmpl.Execute(w, nil)
+            return
+        }
+
+        user := Users{
+            phoneNumber:   r.FormValue("phone-number"),
+            name: r.FormValue("name"),
+            role: r.FormValue("role"),
+        }
+
+        h := sha1.New()
+        h.Write([]byte(user.phoneNumber))
+        password := hex.EncodeToString(h.Sum(nil))
+        currTime := time.Now().Unix()
+
+        result, err := db.Exec(`INSERT INTO user (phone_number, name, password, role, created_date, last_updated_date) VALUES (?, ?, ?, ?, ?, ?)`, user.phoneNumber, user.name, password, user.role, currTime, currTime)
+        if err != nil {
+            log.Fatal(err)
+        }
+
+        id, err := result.LastInsertId()
+
+        up := &user
+        up.id = id
+
+        aur := &AddUserResponse{Success: true, name: user.name, phoneNumber: user.phoneNumber}
+
+        tmpl.Execute(w, aur)
+    })
+
 
 
     r.HandleFunc("/users/{id}/locations/{from-date}/{to-date}", func(w http.ResponseWriter, r *http.Request) {
@@ -50,9 +92,9 @@ func main() {
         }
         defer rows.Close()
 
-        var users []user
+        var users []Users
         for rows.Next() {
-            var u user
+            var u Users
 
             err := rows.Scan(&u.id, &u.phoneNumber, &u.name, &u.role)
             if err != nil {
@@ -94,9 +136,6 @@ func main() {
     r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
         fmt.Fprintf(w, "Hello, you've requested: %s\n", r.URL.Path)
     })
-
-    fs := http.FileServer(http.Dir("static/"))
-    r.Handle("/static/", http.StripPrefix("/static/", fs))
 
     http.ListenAndServe(":80", r)
 }
