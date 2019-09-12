@@ -23,8 +23,8 @@ type Users struct {
 
 type AddUserResponse struct{ 
     Success bool
-    name  string
-    phoneNumber  string
+    Name  string
+    PhoneNumber  string
 }
 
 func main() {
@@ -67,7 +67,7 @@ func main() {
         up := &user
         up.id = id
 
-        aur := &AddUserResponse{Success: true, name: user.name, phoneNumber: user.phoneNumber}
+        aur := &AddUserResponse{Success: true, Name: user.name, PhoneNumber: user.phoneNumber}
 
         tmpl.Execute(w, aur)
     })
