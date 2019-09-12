@@ -1,6 +1,7 @@
 <!-- index.html -->
 {{if .Success}}
     <h1>Thanks for adding a new user with name {{.Name}} and number {{.PhoneNumber}}</h1>
+    <a href="/static/">Add Another</a>
 {{else}}
     <h1>Add user</h1>
     <form method="POST">
