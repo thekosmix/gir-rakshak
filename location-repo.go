@@ -6,49 +6,30 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-func RepoAllUser() []User {
-	rows, err := db.Query(`SELECT id, phone_number, name, role, is_active FROM user order by last_updated_date desc`)
-    if err != nil {
-        log.Fatal(err)
-    }
+func RepoUserLocation(userId int) []Location {
+
+	rows, err := db.Query("SELECT latitude, longitude, recorded_time FROM location where user_id = ? order by recorded_time desc", userId)
+	if err != nil {
+ 		panic(err)
+ 	}
+
     defer rows.Close()
 
-	var users []User
+	var locations []Location
     for rows.Next() {
-	    var u User
+	    var loc Location
 	
-	    err := rows.Scan(&u.Id, &u.PhoneNumber, &u.Name, &u.Role, &u.IsActive)
+	    err := rows.Scan(&loc.Latitude, &loc.Longitude, &loc.RecordedTime)
 	    if err != nil {
 	        log.Fatal(err)
 	    }
-    	users = append(users, u)
+    	locations = append(locations, loc)
     }
     if err := rows.Err(); err != nil {
         log.Fatal(err)
     }
 	// return empty Todo if not found
-	return users
+	return locations
 }
 
-func RepoApproveUser(t UserApproved) bool {
-	stmt, err := db.Prepare("update user set is_active=? where id=?")
- 	if err != nil {
- 		panic(err)
- 	}
- 	res, err := stmt.Exec(t.IsApproved,t.Id)
- 	if err != nil {
- 		panic(err)
- 	}
-	rowCnt, err := res.RowsAffected()
-	if err != nil {
-		panic(err)
-	}
-
-	if(rowCnt > 0) {
-		return t.IsApproved	
-	} else {
-		return false
-	}
-	
-}
 

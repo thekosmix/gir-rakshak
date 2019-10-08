@@ -33,7 +33,7 @@ var routes = Routes{
 	Route{
 		"UserLocation",
 		"GET",
-		"/api/admin/users/{userId}/location?fromTime={fromTime}&toTime={toTime}",
+		"/api/admin/users/{userId}/locations",
 		UserLocation,
 	},
 }
