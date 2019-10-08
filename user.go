@@ -30,3 +30,9 @@ type ApproveUserResponse struct {
 	Msg			string   `json:"msg"`
 	IsApproved 	bool 	 `json:"isApproved"`
 }
+
+type RegisterUserResponse struct {
+	Code        int      `json:"code"`
+	Msg			string   `json:"msg"`
+	IsRegistered 	bool `json:"isRegistered"`
+}

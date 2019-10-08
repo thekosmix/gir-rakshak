@@ -31,11 +31,11 @@ func RepoAllUser() []User {
 }
 
 func RepoApproveUser(t UserApproved) bool {
-	stmt, err := db.Prepare("update user set is_active=? where id=?")
+	stmt, err := db.Prepare("update user set is_active=?, last_updated_date=? where id=?")
  	if err != nil {
  		panic(err)
  	}
- 	res, err := stmt.Exec(t.IsApproved,t.Id)
+ 	res, err := stmt.Exec(t.IsApproved, NowAsUnixMilli(), t.Id)
  	if err != nil {
  		panic(err)
  	}
@@ -46,6 +46,28 @@ func RepoApproveUser(t UserApproved) bool {
 
 	if(rowCnt > 0) {
 		return t.IsApproved	
+	} else {
+		return false
+	}
+	
+}
+
+func RepoRegisterUser(t User) bool {
+	stmt, err := db.Prepare("insert into user(phone_number, name, password, role, device_id, created_date, last_updated_date) values(?,?,?,?,?,?,?)")
+ 	if err != nil {
+ 		panic(err)
+ 	}
+ 	res, err := stmt.Exec(t.PhoneNumber, t.Name, t.Password, "FIELD", t.DeviceId, NowAsUnixMilli(),NowAsUnixMilli())
+ 	if err != nil {
+ 		panic(err)
+ 	}
+	rowCnt, err := res.RowsAffected()
+	if err != nil {
+		panic(err)
+	}
+
+	if(rowCnt > 0) {
+		return true
 	} else {
 		return false
 	}

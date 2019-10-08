@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"log"
+    "time"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -17,4 +18,8 @@ func InitDB() {
     if err := db.Ping(); err != nil {
         log.Fatal(err)
     }
+}
+
+func NowAsUnixMilli() int64 {
+    return time.Now().UnixNano() / 1e6
 }

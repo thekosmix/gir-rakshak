@@ -36,4 +36,10 @@ var routes = Routes{
 		"/api/admin/users/{userId}/locations",
 		UserLocation,
 	},
+	Route{
+		"RegisterUser",
+		"POST",
+		"/api/users/register",
+		RegisterUser,
+	},
 }
