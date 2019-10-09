@@ -61,31 +61,17 @@ func UserLocation(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 	var userId int
-	var fromTime int64
-	var toTime int64
 	var err error
 
 	if userId, err = strconv.Atoi(vars["userId"]); err != nil {
 		panic(err)
 	}
 
-	fromTimeArr, ok := r.URL.Query()["fromTime"]
-	if !ok || len(fromTimeArr[0]) < 1 {
-		panic("fromTime is missing")
-	}
-	if fromTime, err = strconv.ParseInt(fromTimeArr[0], 10, 64); err != nil {
-		panic(err)
-	}
-	
-	toTimeArr, ok := r.URL.Query()["toTime"]
-	if !ok || len(toTimeArr[0]) < 1 {
-		panic("toTime is missing")
-	}
-	if toTime, err = strconv.ParseInt(toTimeArr[0], 10, 64); err != nil {
-		panic(err)
-	}
+	fromTime := GetTime("fromTime", r)
+	toTime := GetTime("toTime", r)
 
 	locations := RepoUserLocation(userId, fromTime, toTime)
+
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	if(len(locations) > 0) {
 		response := UserLocationResponse{0, "", locations}
@@ -100,4 +86,19 @@ func UserLocation(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewEncoder(w).Encode(jsonErr{Code: http.StatusNotFound, Text: "Not Found"}); err != nil {
 		panic(err)
 	}
+}
+
+func GetTime(timeFormat string, r *http.Request) int64 {
+	var requestTime int64
+	var err error
+
+	timeArr, ok := r.URL.Query()[timeFormat]
+	if !ok || len(timeArr[0]) < 1 {
+		panic("toTime is missing")
+	}
+	if requestTime, err = strconv.ParseInt(timeArr[0], 10, 64); err != nil {
+		panic(err)
+	}
+
+	return requestTime;
 }

@@ -28,7 +28,7 @@ type AllUserResponse struct {
 type ApproveUserResponse struct {
 	Code        int      `json:"code"`
 	Msg			string   `json:"msg"`
-	IsApproved 	bool 	 `json:"isApproved"`
+	IsSuccess 	bool 	 `json:"IsSuccess"`
 }
 
 type RegisterUserResponse struct {
