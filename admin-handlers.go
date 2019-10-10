@@ -6,8 +6,9 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
-	"github.com/gorilla/mux"
 	"strconv"
+
+	"github.com/gorilla/mux"
 )
 
 func Index(w http.ResponseWriter, r *http.Request) {
@@ -17,7 +18,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 func AllUsers(w http.ResponseWriter, r *http.Request) {
 	users := RepoAllUser()
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	if(len(users) > 0) {
+	if len(users) > 0 {
 		response := AllUserResponse{0, "", users}
 		w.WriteHeader(http.StatusOK)
 		if err := json.NewEncoder(w).Encode(response); err != nil {
@@ -33,7 +34,7 @@ func AllUsers(w http.ResponseWriter, r *http.Request) {
 }
 
 func ApproveUser(w http.ResponseWriter, r *http.Request) {
-	var userApproved UserApproved
+	var userApproved ApproveUserRequest
 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
 	if err != nil {
 		panic(err)
@@ -49,8 +50,12 @@ func ApproveUser(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	t := RepoApproveUser(userApproved)
-	response := ApproveUserResponse{0,"", t}
+	t, err := RepoApproveUser(userApproved)
+	if err != nil {
+		setErroneousResponse(w, err)
+		panic(err)
+	}
+	response := ApproveUserResponse{0, "", t}
 	w.WriteHeader(http.StatusCreated)
 	if err := json.NewEncoder(w).Encode(response); err != nil {
 		panic(err)
@@ -73,7 +78,7 @@ func UserLocation(w http.ResponseWriter, r *http.Request) {
 	locations := RepoUserLocation(userId, fromTime, toTime)
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	if(len(locations) > 0) {
+	if len(locations) > 0 {
 		response := UserLocationResponse{0, "", locations}
 		w.WriteHeader(http.StatusOK)
 		if err := json.NewEncoder(w).Encode(response); err != nil {
@@ -100,5 +105,5 @@ func GetTime(timeFormat string, r *http.Request) int64 {
 		panic(err)
 	}
 
-	return requestTime;
+	return requestTime
 }

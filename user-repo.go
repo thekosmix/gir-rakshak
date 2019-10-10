@@ -1,7 +1,6 @@
 package main
 
 import (
-	"database/sql"
 	"log"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -31,7 +30,7 @@ func RepoAllUser() []User {
 	return users
 }
 
-func RepoApproveUser(t UserApproved) bool {
+func RepoApproveUser(t ApproveUserRequest) (bool, error) {
 	stmt, err := db.Prepare("update user set is_active=?, last_updated_date=? where id=?")
 	if err != nil {
 		panic(err)
@@ -41,7 +40,7 @@ func RepoApproveUser(t UserApproved) bool {
 	return IsDMLSuccess(res, err)
 }
 
-func RepoRegisterUser(t User) bool {
+func RepoRegisterUser(t User) (bool, error) {
 	stmt, err := db.Prepare("insert into user(phone_number, name, password, role, device_id, created_date, last_updated_date) values(?,?,?,?,?,?,?)")
 	if err != nil {
 		panic(err)
@@ -49,17 +48,4 @@ func RepoRegisterUser(t User) bool {
 	res, err := stmt.Exec(t.PhoneNumber, t.Name, t.Password, "FIELD", t.DeviceId, NowAsUnixMilli(), NowAsUnixMilli())
 
 	return IsDMLSuccess(res, err)
-}
-
-func IsDMLSuccess(res sql.Result, err error) bool {
-
-	if err != nil {
-		panic(err)
-	}
-	rowCnt, err := res.RowsAffected()
-	if err != nil {
-		panic(err)
-	}
-
-	return rowCnt > 0
 }

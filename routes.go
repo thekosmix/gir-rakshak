@@ -42,4 +42,10 @@ var routes = Routes{
 		"/api/users/register",
 		RegisterUser,
 	},
+	Route{
+		"LoginUser",
+		"POST",
+		"/api/users/login",
+		LoginUser,
+	},
 }
