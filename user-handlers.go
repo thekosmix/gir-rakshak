@@ -37,26 +37,25 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func LoginUser(w http.ResponseWriter, r *http.Request) {
-	// var user LoginUserRequest
-	// body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// if err := r.Body.Close(); err != nil {
-	// 	panic(err)
-	// }
-	// w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	// if err := json.Unmarshal(body, &user); err != nil {
-	// 	w.WriteHeader(422) // unprocessable entity
-	// 	if err := json.NewEncoder(w).Encode(err); err != nil {
-	// 		panic(err)
-	// 	}
-	// }
+	SetResponseHeaders(w)
+	var request LoginUserRequest
+	err := json.NewDecoder(r.Body).Decode(&request)
+	if err != nil {
+		setErroneousResponse(w, err)
+		return
+	}
 
-	// t := RepoRegisterUser(user)
-	// response := RegisterUserResponse{0, "", t}
-	// w.WriteHeader(http.StatusCreated)
-	// if err := json.NewEncoder(w).Encode(response); err != nil {
-	// 	panic(err)
-	// }
+	user, err := RepoGetPassword(request.PhoneNumber, request.DeviceId, request.Password)
+
+	if err != nil {
+		setErroneousResponse(w, err)
+		return
+	}
+	_, err = AddUserToken(user.Id, user.AccessToken)
+
+	if err := json.NewEncoder(w).Encode(user); err != nil {
+		setErroneousResponse(w, err)
+		panic(err)
+	}
+
 }

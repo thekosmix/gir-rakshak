@@ -6,8 +6,18 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
+func RepoGetPassword(phoneNumber string, deviceId string, password string) (User, error) {
+	var user User
+	row := db.QueryRow("select id, name, role, MD5(RAND()) from user where phone_number = ? and device_id = ? and password = ? and is_active=1", phoneNumber, deviceId, password)
+	err := row.Scan(&user.Id, &user.Name, &user.Role, &user.AccessToken)
+	if err != nil {
+		return user, err
+	}
+	return user, nil
+}
+
 func RepoAllUser() []User {
-	rows, err := db.Query(`SELECT id, phone_number, name, role, is_active FROM user order by last_updated_date desc`)
+	rows, err := db.Query(`SELECT id, phone_number, name, role, is_active, created_date FROM user order by last_updated_date desc`)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -17,7 +27,7 @@ func RepoAllUser() []User {
 	for rows.Next() {
 		var u User
 
-		err := rows.Scan(&u.Id, &u.PhoneNumber, &u.Name, &u.Role, &u.IsActive)
+		err := rows.Scan(&u.Id, &u.PhoneNumber, &u.Name, &u.Role, &u.IsActive, &u.CreatedDate)
 		if err != nil {
 			log.Fatal(err)
 		}

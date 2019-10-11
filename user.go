@@ -5,8 +5,10 @@ type User struct {
 	Name        string `json:"name"`
 	PhoneNumber string `json:"phoneNumber"`
 	Password    string `json:"password"`
+	AccessToken string `json:"token"`
 	Role        string `json:"role"`
 	DeviceId    string `json:"deviceId"`
+	CreatedDate int64  `json:"createdDate"`
 	IsActive    bool   `json:"isActive"`
 }
 
@@ -38,4 +40,10 @@ type RegisterUserResponse struct {
 	Code         int    `json:"code"`
 	Text         string `json:"text"`
 	IsRegistered bool   `json:"isRegistered"`
+}
+
+type LoginUserResponse struct {
+	Code int    `json:"code"`
+	Text string `json:"text"`
+	user User   `json:"user"`
 }
