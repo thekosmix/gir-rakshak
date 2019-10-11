@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 )
 
 func SetResponseHeaders(w http.ResponseWriter) {
@@ -45,7 +46,7 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := RepoGetPassword(request.PhoneNumber, request.DeviceId, request.Password)
+	user, err := RepoLoginUser(request.PhoneNumber, request.DeviceId, request.Password)
 
 	if err != nil {
 		setErroneousResponse(w, err)
@@ -54,6 +55,31 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
 	_, err = AddUserToken(user.Id, user.AccessToken)
 
 	if err := json.NewEncoder(w).Encode(user); err != nil {
+		setErroneousResponse(w, err)
+		panic(err)
+	}
+
+}
+
+func UploadUserLocation(w http.ResponseWriter, r *http.Request) {
+	SetResponseHeaders(w)
+	var locations []Location
+	err := json.NewDecoder(r.Body).Decode(&locations)
+	if err != nil {
+		setErroneousResponse(w, err)
+		return
+	}
+	uid := r.Header.Get("uid")
+	uidInt, _ := strconv.Atoi(uid)
+
+	isUploaded, err := RepoUploadUserLocation(locations, uidInt)
+
+	if err != nil {
+		setErroneousResponse(w, err)
+		return
+	}
+
+	if err := json.NewEncoder(w).Encode(LocationCaptureResponse{0, "", isUploaded}); err != nil {
 		setErroneousResponse(w, err)
 		panic(err)
 	}

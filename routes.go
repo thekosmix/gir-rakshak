@@ -48,4 +48,10 @@ var routes = Routes{
 		"/api/users/login",
 		LoginUser,
 	},
+	Route{
+		"UploadUserLocation",
+		"POST",
+		"/api/users/{userId}/locations",
+		UploadUserLocation,
+	},
 }

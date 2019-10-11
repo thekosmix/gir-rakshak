@@ -6,7 +6,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-func RepoGetPassword(phoneNumber string, deviceId string, password string) (User, error) {
+func RepoLoginUser(phoneNumber string, deviceId string, password string) (User, error) {
 	var user User
 	row := db.QueryRow("select id, name, role, MD5(RAND()) from user where phone_number = ? and device_id = ? and password = ? and is_active=1", phoneNumber, deviceId, password)
 	err := row.Scan(&user.Id, &user.Name, &user.Role, &user.AccessToken)
