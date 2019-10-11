@@ -10,7 +10,7 @@ func RepoUserLocation(userId int, fromTime int64, toTime int64) []Location {
 
 	rows, err := db.Query("SELECT latitude, longitude, recorded_time FROM location where user_id = ? and recorded_time between ? and ? order by recorded_time desc", userId, fromTime, toTime)
 	if err != nil {
-		panic(err)
+		log.Printf(err.Error())
 	}
 
 	defer rows.Close()
@@ -50,7 +50,7 @@ func RepoUploadUserLocation(locations []Location, userId int) (bool, error) {
 	stmt, err := db.Prepare(sqlStr)
 
 	if err != nil {
-		panic(err)
+		log.Printf(err.Error())
 	}
 
 	//format all vals at once

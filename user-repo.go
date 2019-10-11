@@ -43,7 +43,7 @@ func RepoAllUser() []User {
 func RepoApproveUser(t ApproveUserRequest) (bool, error) {
 	stmt, err := db.Prepare("update user set is_active=?, last_updated_date=? where id=?")
 	if err != nil {
-		panic(err)
+		log.Printf(err.Error())
 	}
 	res, err := stmt.Exec(t.IsApproved, NowAsUnixMilli(), t.Id)
 
@@ -53,7 +53,7 @@ func RepoApproveUser(t ApproveUserRequest) (bool, error) {
 func RepoRegisterUser(t User) (bool, error) {
 	stmt, err := db.Prepare("insert into user(phone_number, name, password, role, device_id, created_date, last_updated_date) values(?,?,?,?,?,?,?)")
 	if err != nil {
-		panic(err)
+		log.Printf(err.Error())
 	}
 	res, err := stmt.Exec(t.PhoneNumber, t.Name, t.Password, "FIELD", t.DeviceId, NowAsUnixMilli(), NowAsUnixMilli())
 

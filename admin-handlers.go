@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -22,14 +23,14 @@ func AllUsers(w http.ResponseWriter, r *http.Request) {
 		response := AllUserResponse{0, "", users}
 		w.WriteHeader(http.StatusOK)
 		if err := json.NewEncoder(w).Encode(response); err != nil {
-			panic(err)
+			log.Printf(err.Error())
 		}
 		return
 	}
 	// If we didn't find it, 404
 	w.WriteHeader(http.StatusNotFound)
 	if err := json.NewEncoder(w).Encode(jsonErr{Code: http.StatusNotFound, Text: "Not Found"}); err != nil {
-		panic(err)
+		log.Printf(err.Error())
 	}
 }
 
@@ -37,28 +38,28 @@ func ApproveUser(w http.ResponseWriter, r *http.Request) {
 	var userApproved ApproveUserRequest
 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
 	if err != nil {
-		panic(err)
+		log.Printf(err.Error())
 	}
 	if err := r.Body.Close(); err != nil {
-		panic(err)
+		log.Printf(err.Error())
 	}
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	if err := json.Unmarshal(body, &userApproved); err != nil {
 		w.WriteHeader(422) // unprocessable entity
 		if err := json.NewEncoder(w).Encode(err); err != nil {
-			panic(err)
+			log.Printf(err.Error())
 		}
 	}
 
 	t, err := RepoApproveUser(userApproved)
 	if err != nil {
 		setErroneousResponse(w, err)
-		panic(err)
+		log.Printf(err.Error())
 	}
 	response := ApproveUserResponse{0, "", t}
 	w.WriteHeader(http.StatusCreated)
 	if err := json.NewEncoder(w).Encode(response); err != nil {
-		panic(err)
+		log.Printf(err.Error())
 	}
 }
 
@@ -69,7 +70,7 @@ func UserLocation(w http.ResponseWriter, r *http.Request) {
 	var err error
 
 	if userId, err = strconv.Atoi(vars["userId"]); err != nil {
-		panic(err)
+		log.Printf(err.Error())
 	}
 
 	fromTime := GetTime("fromTime", r)
@@ -82,14 +83,14 @@ func UserLocation(w http.ResponseWriter, r *http.Request) {
 		response := UserLocationResponse{0, "", locations}
 		w.WriteHeader(http.StatusOK)
 		if err := json.NewEncoder(w).Encode(response); err != nil {
-			panic(err)
+			log.Printf(err.Error())
 		}
 		return
 	}
 	// If we didn't find it, 404
 	w.WriteHeader(http.StatusNotFound)
 	if err := json.NewEncoder(w).Encode(jsonErr{Code: http.StatusNotFound, Text: "Not Found"}); err != nil {
-		panic(err)
+		log.Printf(err.Error())
 	}
 }
 
@@ -99,10 +100,10 @@ func GetTime(timeFormat string, r *http.Request) int64 {
 
 	timeArr, ok := r.URL.Query()[timeFormat]
 	if !ok || len(timeArr[0]) < 1 {
-		panic("toTime is missing")
+		log.Printf(timeFormat + " is missing")
 	}
 	if requestTime, err = strconv.ParseInt(timeArr[0], 10, 64); err != nil {
-		panic(err)
+		log.Printf(err.Error())
 	}
 
 	return requestTime

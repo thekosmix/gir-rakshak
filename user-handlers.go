@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"strconv"
 )
@@ -33,7 +34,7 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 
 	if err := json.NewEncoder(w).Encode(response); err != nil {
 		setErroneousResponse(w, err)
-		panic(err)
+		log.Printf(err.Error())
 	}
 }
 
@@ -56,7 +57,7 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
 
 	if err := json.NewEncoder(w).Encode(user); err != nil {
 		setErroneousResponse(w, err)
-		panic(err)
+		log.Printf(err.Error())
 	}
 
 }
@@ -81,7 +82,7 @@ func UploadUserLocation(w http.ResponseWriter, r *http.Request) {
 
 	if err := json.NewEncoder(w).Encode(LocationCaptureResponse{0, "", isUploaded}); err != nil {
 		setErroneousResponse(w, err)
-		panic(err)
+		log.Printf(err.Error())
 	}
 
 }
