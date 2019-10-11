@@ -44,9 +44,6 @@ func RepoUploadUserLocation(locations []Location, userId int) (bool, error) {
 	//trim the last ,
 	sqlStr = sqlStr[0 : len(sqlStr)-1]
 
-	log.Printf("%s", sqlStr)
-	log.Printf("%s", vals)
-
 	stmt, err := db.Prepare(sqlStr)
 
 	if err != nil {

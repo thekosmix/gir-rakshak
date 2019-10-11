@@ -1,9 +1,9 @@
 package main
 
 type Location struct {
-	Latitude     string `json:"latitude"`
-	Longitude    string `json:"longitude"`
-	RecordedTime int64  `json:"recordedTime"`
+	Latitude     string `json:"lat"`
+	Longitude    string `json:"lon"`
+	RecordedTime int64  `json:"rt"`
 }
 
 // API responses below
