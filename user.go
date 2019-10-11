@@ -5,7 +5,7 @@ type User struct {
 	Name        string `json:"name"`
 	PhoneNumber string `json:"phoneNumber"`
 	Password    string `json:"password"`
-	AccessToken string `json:"token"`
+	AccessToken string `json:"at"`
 	Role        string `json:"role"`
 	DeviceId    string `json:"deviceId"`
 	CreatedDate int64  `json:"createdDate"`
