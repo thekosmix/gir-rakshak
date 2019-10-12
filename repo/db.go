@@ -1,4 +1,4 @@
-package main
+package repo
 
 import (
 	"database/sql"
@@ -7,15 +7,15 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-var db *sql.DB
+var Db *sql.DB
 
 func InitDB() {
 	var err error
-	db, err = sql.Open("mysql", "root:root@(127.0.0.1:3306)/gir_rakshak?parseTime=true")
+	Db, err = sql.Open("mysql", "root:root@(127.0.0.1:3306)/gir_rakshak?parseTime=true")
 	if err != nil {
 		log.Printf(err.Error())
 	}
-	if err := db.Ping(); err != nil {
+	if err := Db.Ping(); err != nil {
 		log.Printf(err.Error())
 	}
 }
@@ -31,4 +31,9 @@ func IsDMLSuccess(res sql.Result, err error) (bool, error) {
 	}
 
 	return rowCnt > 0, err
+}
+
+func InitConfig() {
+	InitDB()
+	InitCache()
 }

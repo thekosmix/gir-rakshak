@@ -1,8 +1,11 @@
-package main
+package handlers
 
 import (
 	"encoding/json"
 	"fmt"
+	"gir-rakshak/models"
+	"gir-rakshak/repo"
+	"gir-rakshak/utils"
 	"io"
 	"io/ioutil"
 	"log"
@@ -17,10 +20,10 @@ func Index(w http.ResponseWriter, r *http.Request) {
 }
 
 func AllUsers(w http.ResponseWriter, r *http.Request) {
-	users := RepoAllUser()
+	users := repo.RepoAllUser()
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	if len(users) > 0 {
-		response := AllUserResponse{0, "", users}
+		response := models.AllUserResponse{0, "", users}
 		w.WriteHeader(http.StatusOK)
 		if err := json.NewEncoder(w).Encode(response); err != nil {
 			log.Printf(err.Error())
@@ -29,13 +32,13 @@ func AllUsers(w http.ResponseWriter, r *http.Request) {
 	}
 	// If we didn't find it, 404
 	w.WriteHeader(http.StatusNotFound)
-	if err := json.NewEncoder(w).Encode(jsonErr{Code: http.StatusNotFound, Text: "Not Found"}); err != nil {
+	if err := json.NewEncoder(w).Encode(utils.JsonErr{Code: http.StatusNotFound, Text: "Not Found"}); err != nil {
 		log.Printf(err.Error())
 	}
 }
 
 func ApproveUser(w http.ResponseWriter, r *http.Request) {
-	var userApproved ApproveUserRequest
+	var userApproved models.ApproveUserRequest
 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
 	if err != nil {
 		log.Printf(err.Error())
@@ -51,12 +54,12 @@ func ApproveUser(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	t, err := RepoApproveUser(userApproved)
+	t, err := repo.RepoApproveUser(userApproved)
 	if err != nil {
-		setErroneousResponse(w, err)
+		SetErroneousResponse(w, err)
 		log.Printf(err.Error())
 	}
-	response := ApproveUserResponse{0, "", t}
+	response := models.ApproveUserResponse{0, "", t}
 	w.WriteHeader(http.StatusCreated)
 	if err := json.NewEncoder(w).Encode(response); err != nil {
 		log.Printf(err.Error())
@@ -76,11 +79,11 @@ func UserLocation(w http.ResponseWriter, r *http.Request) {
 	fromTime := GetTime("fromTime", r)
 	toTime := GetTime("toTime", r)
 
-	locations := RepoUserLocation(userId, fromTime, toTime)
+	locations := repo.RepoUserLocation(userId, fromTime, toTime)
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	if len(locations) > 0 {
-		response := UserLocationResponse{0, "", locations}
+		response := models.UserLocationResponse{0, "", locations}
 		w.WriteHeader(http.StatusOK)
 		if err := json.NewEncoder(w).Encode(response); err != nil {
 			log.Printf(err.Error())
@@ -89,7 +92,7 @@ func UserLocation(w http.ResponseWriter, r *http.Request) {
 	}
 	// If we didn't find it, 404
 	w.WriteHeader(http.StatusNotFound)
-	if err := json.NewEncoder(w).Encode(jsonErr{Code: http.StatusNotFound, Text: "Not Found"}); err != nil {
+	if err := json.NewEncoder(w).Encode(utils.JsonErr{Code: http.StatusNotFound, Text: "Not Found"}); err != nil {
 		log.Printf(err.Error())
 	}
 }

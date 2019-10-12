@@ -1,15 +1,17 @@
 package main
 
 import (
+	"gir-rakshak/handlers"
+	"gir-rakshak/repo"
 	"log"
 	"net/http"
 )
 
 func main() {
 
-	InitConfig()
+	repo.InitConfig()
 
-	router := NewRouter()
+	router := handlers.NewRouter()
 
 	log.Fatal(http.ListenAndServe(":80", router))
 }

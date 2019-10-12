@@ -1,23 +1,22 @@
-package main
+package repo
 
 import (
+	"gir-rakshak/models"
+	"gir-rakshak/utils"
 	"log"
-	//	"fmt"
-	_ "github.com/go-sql-driver/mysql"
 )
 
-func RepoUserLocation(userId int, fromTime int64, toTime int64) []Location {
-
-	rows, err := db.Query("SELECT latitude, longitude, recorded_time FROM location where user_id = ? and recorded_time between ? and ? order by recorded_time desc", userId, fromTime, toTime)
+func RepoUserLocation(userId int, fromTime int64, toTime int64) []models.Location {
+	rows, err := Db.Query("SELECT latitude, longitude, recorded_time FROM location where user_id = ? and recorded_time between ? and ? order by recorded_time desc", userId, fromTime, toTime)
 	if err != nil {
 		log.Printf(err.Error())
 	}
 
 	defer rows.Close()
 
-	var locations []Location
+	var locations []models.Location
 	for rows.Next() {
-		var loc Location
+		var loc models.Location
 
 		err := rows.Scan(&loc.Latitude, &loc.Longitude, &loc.RecordedTime)
 		if err != nil {
@@ -32,19 +31,19 @@ func RepoUserLocation(userId int, fromTime int64, toTime int64) []Location {
 	return locations
 }
 
-func RepoUploadUserLocation(locations []Location, userId int) (bool, error) {
+func RepoUploadUserLocation(locations []models.Location, userId int) (bool, error) {
 
 	sqlStr := "INSERT INTO location(user_id, latitude, longitude, recorded_time, created_date) VALUES "
 	vals := []interface{}{}
 
 	for _, row := range locations {
 		sqlStr += "(?, ?, ?, ?, ?),"
-		vals = append(vals, userId, row.Latitude, row.Longitude, row.RecordedTime, NowAsUnixMilli())
+		vals = append(vals, userId, row.Latitude, row.Longitude, row.RecordedTime, utils.NowAsUnixMilli())
 	}
 	//trim the last ,
 	sqlStr = sqlStr[0 : len(sqlStr)-1]
 
-	stmt, err := db.Prepare(sqlStr)
+	stmt, err := Db.Prepare(sqlStr)
 
 	if err != nil {
 		log.Printf(err.Error())

@@ -1,6 +1,7 @@
-package main
+package handlers
 
 import (
+	"gir-rakshak/utils"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -13,7 +14,7 @@ func NewRouter() *mux.Router {
 		var handler http.Handler
 
 		handler = route.HandlerFunc
-		handler = Logger(handler, route.Name)
+		handler = utils.Logger(handler, route.Name)
 		handler = AuthHandler(handler, route.Name)
 
 		router.

@@ -1,6 +1,9 @@
-package main
+package handlers
 
 import (
+	"encoding/json"
+	"gir-rakshak/repo"
+	"gir-rakshak/utils"
 	"net/http"
 	"strconv"
 )
@@ -21,7 +24,7 @@ func AuthHandler(inner http.Handler, name string) http.Handler {
 		at := r.Header.Get("at")
 		uid := r.Header.Get("uid")
 		uidInt, _ := strconv.Atoi(uid)
-		redisToken := GetUserToken(uidInt)
+		redisToken := repo.GetUserToken(uidInt)
 
 		if at != "" && uid != "" && at == redisToken {
 			inner.ServeHTTP(w, r)
@@ -31,4 +34,13 @@ func AuthHandler(inner http.Handler, name string) http.Handler {
 		w.WriteHeader(401)
 		w.Write([]byte("401 Unauthorized\n"))
 	})
+}
+
+func SetResponseHeaders(w http.ResponseWriter) {
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+}
+
+func SetErroneousResponse(w http.ResponseWriter, err error) {
+	json.NewEncoder(w).Encode(utils.JsonErr{Code: 1, Text: err.Error()})
 }
