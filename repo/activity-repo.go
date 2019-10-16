@@ -29,3 +29,27 @@ func RepoGetActivity(fromTime int64, toTime int64) []models.Activity {
 	// return empty Todo if not found
 	return activities
 }
+
+func RepoGetActivityDetail(activityId int64) []models.ActivityDetail {
+	rows, err := Db.Query("SELECT user_id, activity_id, description, image_url, lat, lon, recorded_time FROM activity_detail where activity_id = ?", activityId)
+	if err != nil {
+		log.Printf(err.Error())
+	}
+
+	defer rows.Close()
+
+	var activityDetails []models.ActivityDetail
+	for rows.Next() {
+		var act models.ActivityDetail
+		err := rows.Scan(&act.UserId, &act.ActivityId, &act.Description, &act.ImageUrl, &act.Lat, &act.Lon, &act.RecordedTime)
+		if err != nil {
+			log.Fatal(err)
+		}
+		activityDetails = append(activityDetails, act)
+	}
+	if err := rows.Err(); err != nil {
+		log.Fatal(err)
+	}
+	// return empty Todo if not found
+	return activityDetails
+}

@@ -60,4 +60,10 @@ var routes = Routes{
 		"/api/admin/activities",
 		ViewAllActivity,
 	},
+	Route{
+		"ViewActivityDetail",
+		"GET",
+		"/api/admin/activities/{activityId}",
+		ViewActivityDetail,
+	},
 }
