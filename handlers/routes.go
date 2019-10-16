@@ -54,4 +54,10 @@ var routes = Routes{
 		"/api/users/{userId}/locations",
 		UploadUserLocation,
 	},
+	Route{
+		"ViewAllActivity",
+		"GET",
+		"/api/admin/activities",
+		ViewAllActivity,
+	},
 }

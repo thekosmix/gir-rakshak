@@ -97,6 +97,29 @@ func UserLocation(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func ViewAllActivity(w http.ResponseWriter, r *http.Request) {
+
+	fromTime := GetTime("fromTime", r)
+	toTime := GetTime("toTime", r)
+
+	activities := repo.RepoGetActivity(fromTime, toTime)
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	if len(activities) > 0 {
+		response := models.ActivityResponse{0, "", activities}
+		w.WriteHeader(http.StatusOK)
+		if err := json.NewEncoder(w).Encode(response); err != nil {
+			log.Printf(err.Error())
+		}
+		return
+	}
+	// If we didn't find it, 404
+	w.WriteHeader(http.StatusNotFound)
+	if err := json.NewEncoder(w).Encode(utils.JsonErr{Code: http.StatusNotFound, Text: "Not Found"}); err != nil {
+		log.Printf(err.Error())
+	}
+}
+
 func GetTime(timeFormat string, r *http.Request) int64 {
 	var requestTime int64
 	var err error

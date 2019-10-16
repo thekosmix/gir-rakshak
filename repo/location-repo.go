@@ -7,7 +7,7 @@ import (
 )
 
 func RepoUserLocation(userId int, fromTime int64, toTime int64) []models.Location {
-	rows, err := Db.Query("SELECT latitude, longitude, recorded_time FROM location where user_id = ? and recorded_time between ? and ? order by recorded_time desc", userId, fromTime, toTime)
+	rows, err := Db.Query("SELECT lat, lon, recorded_time FROM location where user_id = ? and recorded_time between ? and ? order by recorded_time desc", userId, fromTime, toTime)
 	if err != nil {
 		log.Printf(err.Error())
 	}
@@ -18,7 +18,7 @@ func RepoUserLocation(userId int, fromTime int64, toTime int64) []models.Locatio
 	for rows.Next() {
 		var loc models.Location
 
-		err := rows.Scan(&loc.Latitude, &loc.Longitude, &loc.RecordedTime)
+		err := rows.Scan(&loc.Lat, &loc.Lon, &loc.RecordedTime)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -33,12 +33,12 @@ func RepoUserLocation(userId int, fromTime int64, toTime int64) []models.Locatio
 
 func RepoUploadUserLocation(locations []models.Location, userId int) (bool, error) {
 
-	sqlStr := "INSERT INTO location(user_id, latitude, longitude, recorded_time, created_date) VALUES "
+	sqlStr := "INSERT INTO location(user_id, lat, lon, recorded_time, created_date) VALUES "
 	vals := []interface{}{}
 
 	for _, row := range locations {
 		sqlStr += "(?, ?, ?, ?, ?),"
-		vals = append(vals, userId, row.Latitude, row.Longitude, row.RecordedTime, utils.NowAsUnixMilli())
+		vals = append(vals, userId, row.Lat, row.Lon, row.RecordedTime, utils.NowAsUnixMilli())
 	}
 	//trim the last ,
 	sqlStr = sqlStr[0 : len(sqlStr)-1]

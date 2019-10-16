@@ -1,8 +1,8 @@
 package models
 
 type Location struct {
-	Latitude     string `json:"lat"`
-	Longitude    string `json:"lon"`
+	Lat          string `json:"lat"`
+	Lon          string `json:"lon"`
 	RecordedTime int64  `json:"rt"`
 }
 
