@@ -2,9 +2,9 @@ package models
 
 type Activity struct {
 	Id           string `json:"id"`
-	UserId       string `json:"userId"`
+	UserId       int    `json:"userId"`
 	Description  string `json:"description"`
-	RecordedTime string `json:"rt"`
+	RecordedTime int64  `json:"rt"`
 }
 
 type ActivityDetail struct {
@@ -25,6 +25,12 @@ type ActivityResponse struct {
 }
 
 type ActivityDetailResponse struct {
+	Code            int              `json:"code"`
+	Text            string           `json:"text"`
+	ActivityDetails []ActivityDetail `json:"activities"`
+}
+
+type AddActivityResponse struct {
 	Code            int              `json:"code"`
 	Text            string           `json:"text"`
 	ActivityDetails []ActivityDetail `json:"activities"`

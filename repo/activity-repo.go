@@ -2,6 +2,7 @@ package repo
 
 import (
 	"gir-rakshak/models"
+	"gir-rakshak/utils"
 	"log"
 )
 
@@ -52,4 +53,14 @@ func RepoGetActivityDetail(activityId int64) []models.ActivityDetail {
 	}
 	// return empty Todo if not found
 	return activityDetails
+}
+
+func RepoAddActivity(activity models.Activity, userId int) (bool, error) {
+	stmt, err := Db.Prepare("insert into activity(user_id, description, recorded_time, created_date) values(?,?,?,?)")
+	if err != nil {
+		log.Printf(err.Error())
+	}
+	res, err := stmt.Exec(userId, activity.Description, activity.RecordedTime, utils.NowAsUnixMilli())
+
+	return IsDMLSuccess(res, err)
 }

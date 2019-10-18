@@ -77,5 +77,28 @@ func UploadUserLocation(w http.ResponseWriter, r *http.Request) {
 		SetErroneousResponse(w, err)
 		log.Printf(err.Error())
 	}
+}
 
+func AddActivity(w http.ResponseWriter, r *http.Request) {
+	SetResponseHeaders(w)
+	var activity models.Activity
+	err := json.NewDecoder(r.Body).Decode(&activity)
+	if err != nil {
+		SetErroneousResponse(w, err)
+		return
+	}
+	uid := r.Header.Get("uid")
+	uidInt, _ := strconv.Atoi(uid)
+	log.Printf("%d", uidInt)
+	isUploaded, err := repo.RepoAddActivity(activity, uidInt)
+
+	if err != nil {
+		SetErroneousResponse(w, err)
+		return
+	}
+
+	if err := json.NewEncoder(w).Encode(models.ApproveUserResponse{0, "", isUploaded}); err != nil {
+		SetErroneousResponse(w, err)
+		log.Printf(err.Error())
+	}
 }
