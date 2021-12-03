@@ -7,6 +7,8 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+
+	"github.com/gorilla/mux"
 )
 
 func RegisterUser(w http.ResponseWriter, r *http.Request) {
@@ -98,6 +100,38 @@ func AddActivity(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := json.NewEncoder(w).Encode(models.ApproveUserResponse{0, "", isUploaded}); err != nil {
+		SetErroneousResponse(w, err)
+		log.Printf(err.Error())
+	}
+}
+
+func AddActivityDetail(w http.ResponseWriter, r *http.Request) {
+	SetResponseHeaders(w)
+	var activityDetail models.ActivityDetail
+	err := json.NewDecoder(r.Body).Decode(&activityDetail)
+	if err != nil {
+		SetErroneousResponse(w, err)
+		return
+	}
+
+	vars := mux.Vars(r)
+	var activityId int
+
+	if activityId, err = strconv.Atoi(vars["activityId"]); err != nil {
+		log.Printf(err.Error())
+	}
+
+	uid := r.Header.Get("uid")
+	uidInt, _ := strconv.Atoi(uid)
+	log.Printf("%d", uidInt)
+	isAdded, err := repo.RepoAddActivityDetail(activityDetail, uidInt, activityId)
+
+	if err != nil {
+		SetErroneousResponse(w, err)
+		return
+	}
+
+	if err := json.NewEncoder(w).Encode(models.AddActivityResponse{0, "", isAdded}); err != nil {
 		SetErroneousResponse(w, err)
 		log.Printf(err.Error())
 	}

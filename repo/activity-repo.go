@@ -64,3 +64,13 @@ func RepoAddActivity(activity models.Activity, userId int) (bool, error) {
 
 	return IsDMLSuccess(res, err)
 }
+
+func RepoAddActivityDetail(activityDetail models.ActivityDetail, userId int, activityId int) (bool, error) {
+	stmt, err := Db.Prepare("insert into activity_detail(user_id, activity_id, image_url, description, recorded_time, lat, lon, created_date) values(?,?,?,?,?,?,?,?)")
+	if err != nil {
+		log.Printf(err.Error())
+	}
+	res, err := stmt.Exec(userId, activityId, activityDetail.ImageUrl, activityDetail.Description, activityDetail.RecordedTime, activityDetail.Lat, activityDetail.Lon, utils.NowAsUnixMilli())
+
+	return IsDMLSuccess(res, err)
+}

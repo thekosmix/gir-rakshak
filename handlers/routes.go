@@ -72,4 +72,10 @@ var routes = Routes{
 		"/api/users/activities",
 		AddActivity,
 	},
+	Route{
+		"AddActivityDetail",
+		"POST",
+		"/api/users/activities/{activityId}/detail",
+		AddActivityDetail,
+	},
 }

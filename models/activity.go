@@ -1,7 +1,7 @@
 package models
 
 type Activity struct {
-	Id           string `json:"id"`
+	Id           int    `json:"id"`
 	UserId       int    `json:"userId"`
 	Description  string `json:"description"`
 	RecordedTime int64  `json:"rt"`
@@ -11,7 +11,7 @@ type Activity struct {
 
 type ActivityDetail struct {
 	UserId       string `json:"userId"`
-	ActivityId   string `json:"activityId"`
+	ActivityId   int    `json:"activityId"`
 	Description  string `json:"description"`
 	ImageUrl     string `json:"imageUrl"`
 	Lat          string `json:"lat"`
@@ -33,7 +33,7 @@ type ActivityDetailResponse struct {
 }
 
 type AddActivityResponse struct {
-	Code            int              `json:"code"`
-	Text            string           `json:"text"`
-	ActivityDetails []ActivityDetail `json:"activities"`
+	Code    int    `json:"code"`
+	Text    string `json:"text"`
+	IsAdded bool   `json:"isAdded"`
 }
