@@ -7,7 +7,7 @@ import (
 )
 
 func RepoGetActivity(fromTime int64, toTime int64) []models.Activity {
-	rows, err := Db.Query("SELECT id, user_id, description, recorded_time FROM activity where recorded_time between ? and ? order by recorded_time desc", fromTime, toTime)
+	rows, err := Db.Query("SELECT id, user_id, description, recorded_time, lat, lon FROM activity where recorded_time between ? and ? order by recorded_time desc", fromTime, toTime)
 	if err != nil {
 		log.Printf(err.Error())
 	}
@@ -18,7 +18,7 @@ func RepoGetActivity(fromTime int64, toTime int64) []models.Activity {
 	for rows.Next() {
 		var act models.Activity
 
-		err := rows.Scan(&act.Id, &act.UserId, &act.Description, &act.RecordedTime)
+		err := rows.Scan(&act.Id, &act.UserId, &act.Description, &act.RecordedTime, &act.Lat, &act.Lon)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -56,11 +56,11 @@ func RepoGetActivityDetail(activityId int64) []models.ActivityDetail {
 }
 
 func RepoAddActivity(activity models.Activity, userId int) (bool, error) {
-	stmt, err := Db.Prepare("insert into activity(user_id, description, recorded_time, created_date) values(?,?,?,?)")
+	stmt, err := Db.Prepare("insert into activity(user_id, description, recorded_time, lat, lon, created_date) values(?,?,?,?,?,?)")
 	if err != nil {
 		log.Printf(err.Error())
 	}
-	res, err := stmt.Exec(userId, activity.Description, activity.RecordedTime, utils.NowAsUnixMilli())
+	res, err := stmt.Exec(userId, activity.Description, activity.RecordedTime, activity.Lat, activity.Lon, utils.NowAsUnixMilli())
 
 	return IsDMLSuccess(res, err)
 }

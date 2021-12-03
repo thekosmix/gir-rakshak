@@ -5,6 +5,8 @@ type Activity struct {
 	UserId       int    `json:"userId"`
 	Description  string `json:"description"`
 	RecordedTime int64  `json:"rt"`
+	Lat          string `json:"lat"`
+	Lon          string `json:"lon"`
 }
 
 type ActivityDetail struct {
