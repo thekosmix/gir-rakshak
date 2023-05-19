@@ -31,16 +31,7 @@ func AuthHandler(inner http.Handler, name string) http.Handler {
 			return
 		}
 
-		w.WriteHeader(401)
-		w.Write([]byte("401 Unauthorized\n"))
+		utils.SetResponseHeaders(w);
+		json.NewEncoder(w).Encode(utils.BaseResponse{Code: 1, Text: "401 Unauthorized"})
 	})
-}
-
-func SetResponseHeaders(w http.ResponseWriter) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
-}
-
-func SetErroneousResponse(w http.ResponseWriter, err error) {
-	json.NewEncoder(w).Encode(utils.BaseResponse{Code: 1, Text: err.Error()})
 }

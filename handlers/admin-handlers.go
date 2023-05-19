@@ -21,19 +21,19 @@ func Index(w http.ResponseWriter, r *http.Request) {
 
 func AllUsers(w http.ResponseWriter, r *http.Request) {
 	users := repo.RepoAllUser()
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	
+	utils.SetResponseHeaders(w);
+
 	if len(users) > 0 {
 		var response models.AllUserResponse
 		response.Users = users
 
-		w.WriteHeader(http.StatusOK)
 		if err := json.NewEncoder(w).Encode(response); err != nil {
 			log.Printf(err.Error())
 		}
 		return
 	}
-	// If we didn't find it, 404
-	w.WriteHeader(http.StatusNotFound)
+	
 	if err := json.NewEncoder(w).Encode(utils.BaseResponse{Code: http.StatusNotFound, Text: "Not Found"}); err != nil {
 		log.Printf(err.Error())
 	}
@@ -48,7 +48,8 @@ func ApproveUser(w http.ResponseWriter, r *http.Request) {
 	if err := r.Body.Close(); err != nil {
 		log.Printf(err.Error())
 	}
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	utils.SetResponseHeaders(w);
+
 	if err := json.Unmarshal(body, &userApproved); err != nil {
 		w.WriteHeader(422) // unprocessable entity
 		if err := json.NewEncoder(w).Encode(err); err != nil {
@@ -58,14 +59,13 @@ func ApproveUser(w http.ResponseWriter, r *http.Request) {
 
 	t, err := repo.RepoApproveUser(userApproved)
 	if err != nil {
-		SetErroneousResponse(w, err)
+		utils.SetErroneousResponse(w, err)
 		log.Printf(err.Error())
 	}
 
 	var response models.ApproveUserResponse
 	response.IsSuccess = t
 
-	w.WriteHeader(http.StatusCreated)
 	if err := json.NewEncoder(w).Encode(response); err != nil {
 		log.Printf(err.Error())
 	}
@@ -85,21 +85,20 @@ func UserLocation(w http.ResponseWriter, r *http.Request) {
 	toTime := GetTime("toTime", r)
 
 	locations := repo.RepoUserLocation(userId, fromTime, toTime)
+	
+	utils.SetResponseHeaders(w);
 
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	if len(locations) > 0 {
 
 		var response models.UserLocationResponse
 		response.Locations = locations
 
-		w.WriteHeader(http.StatusOK)
 		if err := json.NewEncoder(w).Encode(response); err != nil {
 			log.Printf(err.Error())
 		}
 		return
 	}
-	// If we didn't find it, 404
-	w.WriteHeader(http.StatusNotFound)
+	
 	if err := json.NewEncoder(w).Encode(utils.BaseResponse{Code: http.StatusNotFound, Text: "Not Found"}); err != nil {
 		log.Printf(err.Error())
 	}
@@ -111,21 +110,20 @@ func ViewAllActivity(w http.ResponseWriter, r *http.Request) {
 	toTime := GetTime("toTime", r)
 
 	activities := repo.RepoGetActivity(fromTime, toTime)
+	
+	utils.SetResponseHeaders(w);
 
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	if len(activities) > 0 {
 
 		var response models.ActivityResponse
 		response.Activities = activities
 
-		w.WriteHeader(http.StatusOK)
 		if err := json.NewEncoder(w).Encode(response); err != nil {
 			log.Printf(err.Error())
 		}
 		return
 	}
-	// If we didn't find it, 404
-	w.WriteHeader(http.StatusNotFound)
+	
 	if err := json.NewEncoder(w).Encode(utils.BaseResponse{Code: http.StatusNotFound, Text: "Not Found"}); err != nil {
 		log.Printf(err.Error())
 	}
@@ -142,19 +140,19 @@ func ViewActivityDetail(w http.ResponseWriter, r *http.Request) {
 	}
 
 	activityDetails := repo.RepoGetActivityDetail(activityId)
+	
+	utils.SetResponseHeaders(w);
 
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	if len(activityDetails) > 0 {
 		var response models.ActivityDetailResponse
 		response.ActivityDetails = activityDetails
-		w.WriteHeader(http.StatusOK)
+		
 		if err := json.NewEncoder(w).Encode(response); err != nil {
 			log.Printf(err.Error())
 		}
 		return
 	}
-	// If we didn't find it, 404
-	w.WriteHeader(http.StatusNotFound)
+	
 	if err := json.NewEncoder(w).Encode(utils.BaseResponse{Code: http.StatusNotFound, Text: "Not Found"}); err != nil {
 		log.Printf(err.Error())
 	}

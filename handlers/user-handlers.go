@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"gir-rakshak/models"
 	"gir-rakshak/repo"
+	"gir-rakshak/utils"
 	"log"
 	"net/http"
 	"strconv"
@@ -12,17 +13,17 @@ import (
 )
 
 func RegisterUser(w http.ResponseWriter, r *http.Request) {
-	SetResponseHeaders(w)
+	utils.SetResponseHeaders(w)
 	var user models.User
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
-		SetErroneousResponse(w, err)
+		utils.SetErroneousResponse(w, err)
 		return
 	}
 
 	t, err := repo.RepoRegisterUser(user)
 	if err != nil {
-		SetErroneousResponse(w, err)
+		utils.SetErroneousResponse(w, err)
 		return
 	}
 	
@@ -30,24 +31,24 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 	response.IsRegistered = t
 
 	if err := json.NewEncoder(w).Encode(response); err != nil {
-		SetErroneousResponse(w, err)
+		utils.SetErroneousResponse(w, err)
 		log.Printf(err.Error())
 	}
 }
 
 func LoginUser(w http.ResponseWriter, r *http.Request) {
-	SetResponseHeaders(w)
+	utils.SetResponseHeaders(w)
 	var request models.LoginUserRequest
 	err := json.NewDecoder(r.Body).Decode(&request)
 	if err != nil {
-		SetErroneousResponse(w, err)
+		utils.SetErroneousResponse(w, err)
 		return
 	}
 
 	user, err := repo.RepoLoginUser(request.PhoneNumber, request.DeviceId, request.Password)
 
 	if err != nil {
-		SetErroneousResponse(w, err)
+		utils.SetErroneousResponse(w, err)
 		return
 	}
 	_, err = repo.AddUserToken(user.Id, user.AccessToken)
@@ -56,18 +57,18 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
 	response.User = user
 
 	if err := json.NewEncoder(w).Encode(response); err != nil {
-		SetErroneousResponse(w, err)
+		utils.SetErroneousResponse(w, err)
 		log.Printf(err.Error())
 	}
 
 }
 
 func UploadUserLocation(w http.ResponseWriter, r *http.Request) {
-	SetResponseHeaders(w)
+	utils.SetResponseHeaders(w)
 	var locations []models.Location
 	err := json.NewDecoder(r.Body).Decode(&locations)
 	if err != nil {
-		SetErroneousResponse(w, err)
+		utils.SetErroneousResponse(w, err)
 		return
 	}
 	uid := r.Header.Get("uid")
@@ -76,7 +77,7 @@ func UploadUserLocation(w http.ResponseWriter, r *http.Request) {
 	isCaptured, err := repo.RepoUploadUserLocation(locations, uidInt)
 
 	if err != nil {
-		SetErroneousResponse(w, err)
+		utils.SetErroneousResponse(w, err)
 		return
 	}
 
@@ -84,17 +85,17 @@ func UploadUserLocation(w http.ResponseWriter, r *http.Request) {
 	response.IsCaptured = isCaptured
 
 	if err := json.NewEncoder(w).Encode(response); err != nil {
-		SetErroneousResponse(w, err)
+		utils.SetErroneousResponse(w, err)
 		log.Printf(err.Error())
 	}
 }
 
 func AddActivity(w http.ResponseWriter, r *http.Request) {
-	SetResponseHeaders(w)
+	utils.SetResponseHeaders(w)
 	var activity models.Activity
 	err := json.NewDecoder(r.Body).Decode(&activity)
 	if err != nil {
-		SetErroneousResponse(w, err)
+		utils.SetErroneousResponse(w, err)
 		return
 	}
 	uid := r.Header.Get("uid")
@@ -103,7 +104,7 @@ func AddActivity(w http.ResponseWriter, r *http.Request) {
 	isUploaded, err := repo.RepoAddActivity(activity, uidInt)
 
 	if err != nil {
-		SetErroneousResponse(w, err)
+		utils.SetErroneousResponse(w, err)
 		return
 	}
 
@@ -111,17 +112,17 @@ func AddActivity(w http.ResponseWriter, r *http.Request) {
 	response.IsSuccess = isUploaded
 
 	if err := json.NewEncoder(w).Encode(response); err != nil {
-		SetErroneousResponse(w, err)
+		utils.SetErroneousResponse(w, err)
 		log.Printf(err.Error())
 	}
 }
 
 func AddActivityDetail(w http.ResponseWriter, r *http.Request) {
-	SetResponseHeaders(w)
+	utils.SetResponseHeaders(w)
 	var activityDetail models.ActivityDetail
 	err := json.NewDecoder(r.Body).Decode(&activityDetail)
 	if err != nil {
-		SetErroneousResponse(w, err)
+		utils.SetErroneousResponse(w, err)
 		return
 	}
 
@@ -138,7 +139,7 @@ func AddActivityDetail(w http.ResponseWriter, r *http.Request) {
 	isAdded, err := repo.RepoAddActivityDetail(activityDetail, uidInt, activityId)
 
 	if err != nil {
-		SetErroneousResponse(w, err)
+		utils.SetErroneousResponse(w, err)
 		return
 	}
 
@@ -146,7 +147,7 @@ func AddActivityDetail(w http.ResponseWriter, r *http.Request) {
 	response.IsAdded = isAdded
 
 	if err := json.NewEncoder(w).Encode(response); err != nil {
-		SetErroneousResponse(w, err)
+		utils.SetErroneousResponse(w, err)
 		log.Printf(err.Error())
 	}
 }
