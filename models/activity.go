@@ -1,5 +1,7 @@
 package models
 
+import "gir-rakshak/utils"
+
 type Activity struct {
 	Id           int    `json:"id"`
 	UserId       int    `json:"userId"`
@@ -19,21 +21,17 @@ type ActivityDetail struct {
 	RecordedTime int64  `json:"rt"`
 }
 
-// API responses below
 type ActivityResponse struct {
-	Code       int        `json:"code"`
-	Text       string     `json:"text"`
+	utils.BaseResponse
 	Activities []Activity `json:"activities"`
 }
 
 type ActivityDetailResponse struct {
-	Code            int              `json:"code"`
-	Text            string           `json:"text"`
+	utils.BaseResponse
 	ActivityDetails []ActivityDetail `json:"activities"`
 }
 
 type AddActivityResponse struct {
-	Code    int    `json:"code"`
-	Text    string `json:"text"`
+	utils.BaseResponse
 	IsAdded bool   `json:"isAdded"`
 }

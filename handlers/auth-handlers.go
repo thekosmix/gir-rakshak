@@ -42,5 +42,5 @@ func SetResponseHeaders(w http.ResponseWriter) {
 }
 
 func SetErroneousResponse(w http.ResponseWriter, err error) {
-	json.NewEncoder(w).Encode(utils.JsonErr{Code: 1, Text: err.Error()})
+	json.NewEncoder(w).Encode(utils.BaseResponse{Code: 1, Text: err.Error()})
 }

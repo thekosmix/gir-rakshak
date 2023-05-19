@@ -25,7 +25,9 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 		SetErroneousResponse(w, err)
 		return
 	}
-	response := models.RegisterUserResponse{0, "", t}
+	
+	var response models.RegisterUserResponse
+	response.IsRegistered = t
 
 	if err := json.NewEncoder(w).Encode(response); err != nil {
 		SetErroneousResponse(w, err)
@@ -50,7 +52,10 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
 	}
 	_, err = repo.AddUserToken(user.Id, user.AccessToken)
 
-	if err := json.NewEncoder(w).Encode(user); err != nil {
+	var response models.LoginUserResponse
+	response.User = user
+
+	if err := json.NewEncoder(w).Encode(response); err != nil {
 		SetErroneousResponse(w, err)
 		log.Printf(err.Error())
 	}
@@ -68,14 +73,17 @@ func UploadUserLocation(w http.ResponseWriter, r *http.Request) {
 	uid := r.Header.Get("uid")
 	uidInt, _ := strconv.Atoi(uid)
 
-	isUploaded, err := repo.RepoUploadUserLocation(locations, uidInt)
+	isCaptured, err := repo.RepoUploadUserLocation(locations, uidInt)
 
 	if err != nil {
 		SetErroneousResponse(w, err)
 		return
 	}
 
-	if err := json.NewEncoder(w).Encode(models.LocationCaptureResponse{0, "", isUploaded}); err != nil {
+	var response models.LocationCaptureResponse
+	response.IsCaptured = isCaptured
+
+	if err := json.NewEncoder(w).Encode(response); err != nil {
 		SetErroneousResponse(w, err)
 		log.Printf(err.Error())
 	}
@@ -99,7 +107,10 @@ func AddActivity(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := json.NewEncoder(w).Encode(models.ApproveUserResponse{0, "", isUploaded}); err != nil {
+	var response models.ApproveUserResponse
+	response.IsSuccess = isUploaded
+
+	if err := json.NewEncoder(w).Encode(response); err != nil {
 		SetErroneousResponse(w, err)
 		log.Printf(err.Error())
 	}
@@ -131,7 +142,10 @@ func AddActivityDetail(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := json.NewEncoder(w).Encode(models.AddActivityResponse{0, "", isAdded}); err != nil {
+	var response models.AddActivityResponse
+	response.IsAdded = isAdded
+
+	if err := json.NewEncoder(w).Encode(response); err != nil {
 		SetErroneousResponse(w, err)
 		log.Printf(err.Error())
 	}

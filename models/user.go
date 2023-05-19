@@ -1,5 +1,7 @@
 package models
 
+import "gir-rakshak/utils"
+
 type User struct {
 	Id          int    `json:"id"`
 	Name        string `json:"name"`
@@ -25,25 +27,21 @@ type LoginUserRequest struct {
 
 // API responses below
 type AllUserResponse struct {
-	Code  int    `json:"code"`
-	Text  string `json:"text"`
+	utils.BaseResponse
 	Users []User `json:"users"`
 }
 
 type ApproveUserResponse struct {
-	Code      int    `json:"code"`
-	Text      string `json:"text"`
+	utils.BaseResponse
 	IsSuccess bool   `json:"isSuccess"`
 }
 
 type RegisterUserResponse struct {
-	Code         int    `json:"code"`
-	Text         string `json:"text"`
+	utils.BaseResponse
 	IsRegistered bool   `json:"isRegistered"`
 }
 
 type LoginUserResponse struct {
-	Code int    `json:"code"`
-	Text string `json:"text"`
-	user User   `json:"user"`
+	utils.BaseResponse
+	User 	User   `json:"user"`
 }
