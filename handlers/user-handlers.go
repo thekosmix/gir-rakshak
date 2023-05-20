@@ -13,7 +13,7 @@ import (
 )
 
 func RegisterUser(w http.ResponseWriter, r *http.Request) {
-	utils.SetResponseHeaders(w)
+	
 	var user models.User
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
@@ -37,7 +37,7 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func LoginUser(w http.ResponseWriter, r *http.Request) {
-	utils.SetResponseHeaders(w)
+
 	var request models.LoginUserRequest
 	err := json.NewDecoder(r.Body).Decode(&request)
 	if err != nil {
@@ -64,7 +64,7 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func UploadUserLocation(w http.ResponseWriter, r *http.Request) {
-	utils.SetResponseHeaders(w)
+	
 	var locations []models.Location
 	err := json.NewDecoder(r.Body).Decode(&locations)
 	if err != nil {
@@ -91,7 +91,7 @@ func UploadUserLocation(w http.ResponseWriter, r *http.Request) {
 }
 
 func AddActivity(w http.ResponseWriter, r *http.Request) {
-	utils.SetResponseHeaders(w)
+	
 	var activity models.Activity
 	err := json.NewDecoder(r.Body).Decode(&activity)
 	if err != nil {
@@ -118,7 +118,7 @@ func AddActivity(w http.ResponseWriter, r *http.Request) {
 }
 
 func AddActivityDetail(w http.ResponseWriter, r *http.Request) {
-	utils.SetResponseHeaders(w)
+	
 	var activityDetail models.ActivityDetail
 	err := json.NewDecoder(r.Body).Decode(&activityDetail)
 	if err != nil {

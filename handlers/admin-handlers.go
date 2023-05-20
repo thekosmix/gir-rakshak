@@ -22,7 +22,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 func AllUsers(w http.ResponseWriter, r *http.Request) {
 	users := repo.RepoAllUser()
 	
-	utils.SetResponseHeaders(w);
+	;
 
 	if len(users) > 0 {
 		var response models.AllUserResponse
@@ -48,7 +48,7 @@ func ApproveUser(w http.ResponseWriter, r *http.Request) {
 	if err := r.Body.Close(); err != nil {
 		log.Printf(err.Error())
 	}
-	utils.SetResponseHeaders(w);
+	;
 
 	if err := json.Unmarshal(body, &userApproved); err != nil {
 		w.WriteHeader(422) // unprocessable entity
@@ -86,7 +86,7 @@ func UserLocation(w http.ResponseWriter, r *http.Request) {
 
 	locations := repo.RepoUserLocation(userId, fromTime, toTime)
 	
-	utils.SetResponseHeaders(w);
+	;
 
 	if len(locations) > 0 {
 
@@ -111,7 +111,7 @@ func ViewAllActivity(w http.ResponseWriter, r *http.Request) {
 
 	activities := repo.RepoGetActivity(fromTime, toTime)
 	
-	utils.SetResponseHeaders(w);
+	;
 
 	if len(activities) > 0 {
 
@@ -141,7 +141,7 @@ func ViewActivityDetail(w http.ResponseWriter, r *http.Request) {
 
 	activityDetails := repo.RepoGetActivityDetail(activityId)
 	
-	utils.SetResponseHeaders(w);
+	;
 
 	if len(activityDetails) > 0 {
 		var response models.ActivityDetailResponse

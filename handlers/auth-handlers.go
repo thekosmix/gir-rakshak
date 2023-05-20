@@ -13,7 +13,7 @@ var unAuthRoutes = [...]string{
 
 func AuthHandler(inner http.Handler, name string) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-
+		utils.SetResponseHeaders(w)
 		for _, a := range unAuthRoutes {
 			if a == name {
 				inner.ServeHTTP(w, r)
@@ -31,7 +31,6 @@ func AuthHandler(inner http.Handler, name string) http.Handler {
 			return
 		}
 
-		utils.SetResponseHeaders(w);
 		json.NewEncoder(w).Encode(utils.BaseResponse{Code: 1, Text: "401 Unauthorized"})
 	})
 }
