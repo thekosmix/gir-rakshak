@@ -6,8 +6,18 @@ import (
 	"log"
 )
 
-func RepoGetActivity(fromTime int64, toTime int64) []models.Activity {
-	rows, err := Db.Query("SELECT id, user_id, description, recorded_time, lat, lon FROM activity where recorded_time between ? and ? order by recorded_time desc", fromTime, toTime)
+func RepoGetActivity(fromTime int64, toTime int64, userId int) []models.Activity {
+	var selectFrom string = "SELECT id, user_id, description, recorded_time, lat, lon FROM activity "
+	var where string = "where recorded_time between ? and ? "
+
+	if userId != -1 {
+		where = where + "and user_id = ? "
+	}
+
+	var order string = "order by recorded_time desc"
+
+	var sql string = selectFrom + where + order
+	rows, err := Db.Query(sql, fromTime, toTime, userId)
 	if err != nil {
 		log.Printf(err.Error())
 	}

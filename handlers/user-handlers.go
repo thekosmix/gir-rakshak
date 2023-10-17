@@ -13,7 +13,7 @@ import (
 )
 
 func RegisterUser(w http.ResponseWriter, r *http.Request) {
-	
+
 	var user models.User
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
@@ -26,7 +26,7 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 		utils.SetErroneousResponse(w, err)
 		return
 	}
-	
+
 	var response models.RegisterUserResponse
 	response.IsRegistered = t
 
@@ -64,7 +64,7 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func UploadUserLocation(w http.ResponseWriter, r *http.Request) {
-	
+
 	var locations []models.Location
 	err := json.NewDecoder(r.Body).Decode(&locations)
 	if err != nil {
@@ -91,7 +91,7 @@ func UploadUserLocation(w http.ResponseWriter, r *http.Request) {
 }
 
 func AddActivity(w http.ResponseWriter, r *http.Request) {
-	
+
 	var activity models.Activity
 	err := json.NewDecoder(r.Body).Decode(&activity)
 	if err != nil {
@@ -117,8 +117,33 @@ func AddActivity(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func ViewUserActivity(w http.ResponseWriter, r *http.Request) {
+
+	fromTime := GetTime("fromTime", r)
+	toTime := GetTime("toTime", r)
+	uid := r.Header.Get("uid")
+	uidInt, _ := strconv.Atoi(uid)
+
+	activities := repo.RepoGetActivity(fromTime, toTime, uidInt)
+
+	if len(activities) > 0 {
+
+		var response models.ActivityResponse
+		response.Activities = activities
+
+		if err := json.NewEncoder(w).Encode(response); err != nil {
+			log.Printf(err.Error())
+		}
+		return
+	}
+
+	if err := json.NewEncoder(w).Encode(utils.BaseResponse{Code: http.StatusNotFound, Text: "Not Found"}); err != nil {
+		log.Printf(err.Error())
+	}
+}
+
 func AddActivityDetail(w http.ResponseWriter, r *http.Request) {
-	
+
 	var activityDetail models.ActivityDetail
 	err := json.NewDecoder(r.Body).Decode(&activityDetail)
 	if err != nil {

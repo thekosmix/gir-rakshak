@@ -21,8 +21,6 @@ func Index(w http.ResponseWriter, r *http.Request) {
 
 func AllUsers(w http.ResponseWriter, r *http.Request) {
 	users := repo.RepoAllUser()
-	
-	;
 
 	if len(users) > 0 {
 		var response models.AllUserResponse
@@ -33,7 +31,7 @@ func AllUsers(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-	
+
 	if err := json.NewEncoder(w).Encode(utils.BaseResponse{Code: http.StatusNotFound, Text: "Not Found"}); err != nil {
 		log.Printf(err.Error())
 	}
@@ -48,7 +46,6 @@ func ApproveUser(w http.ResponseWriter, r *http.Request) {
 	if err := r.Body.Close(); err != nil {
 		log.Printf(err.Error())
 	}
-	;
 
 	if err := json.Unmarshal(body, &userApproved); err != nil {
 		w.WriteHeader(422) // unprocessable entity
@@ -85,8 +82,6 @@ func UserLocation(w http.ResponseWriter, r *http.Request) {
 	toTime := GetTime("toTime", r)
 
 	locations := repo.RepoUserLocation(userId, fromTime, toTime)
-	
-	;
 
 	if len(locations) > 0 {
 
@@ -98,7 +93,7 @@ func UserLocation(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-	
+
 	if err := json.NewEncoder(w).Encode(utils.BaseResponse{Code: http.StatusNotFound, Text: "Not Found"}); err != nil {
 		log.Printf(err.Error())
 	}
@@ -109,9 +104,7 @@ func ViewAllActivity(w http.ResponseWriter, r *http.Request) {
 	fromTime := GetTime("fromTime", r)
 	toTime := GetTime("toTime", r)
 
-	activities := repo.RepoGetActivity(fromTime, toTime)
-	
-	;
+	activities := repo.RepoGetActivity(fromTime, toTime, -1)
 
 	if len(activities) > 0 {
 
@@ -123,7 +116,7 @@ func ViewAllActivity(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-	
+
 	if err := json.NewEncoder(w).Encode(utils.BaseResponse{Code: http.StatusNotFound, Text: "Not Found"}); err != nil {
 		log.Printf(err.Error())
 	}
@@ -140,19 +133,17 @@ func ViewActivityDetail(w http.ResponseWriter, r *http.Request) {
 	}
 
 	activityDetails := repo.RepoGetActivityDetail(activityId)
-	
-	;
 
 	if len(activityDetails) > 0 {
 		var response models.ActivityDetailResponse
 		response.ActivityDetails = activityDetails
-		
+
 		if err := json.NewEncoder(w).Encode(response); err != nil {
 			log.Printf(err.Error())
 		}
 		return
 	}
-	
+
 	if err := json.NewEncoder(w).Encode(utils.BaseResponse{Code: http.StatusNotFound, Text: "Not Found"}); err != nil {
 		log.Printf(err.Error())
 	}

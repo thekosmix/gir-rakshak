@@ -11,7 +11,7 @@ var Db *sql.DB
 
 func InitDB() {
 	var err error
-	Db, err = sql.Open("mysql", "root:UcVivek5!@(127.0.0.1:3306)/gir_rakshak?parseTime=true")
+	Db, err = sql.Open("mysql", "root:BravoVivek5!@(127.0.0.1:3306)/gir_rakshak?parseTime=true")
 	if err != nil {
 		log.Printf(err.Error())
 	}
