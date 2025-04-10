@@ -51,7 +51,8 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
 		utils.SetErroneousResponse(w, err)
 		return
 	}
-	_, err = repo.AddUserToken(user.Id, user.AccessToken)
+	
+	err = repo.AddUserToken(user.Id, user.AccessToken)
 
 	var response models.LoginUserResponse
 	response.User = user

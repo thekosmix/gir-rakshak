@@ -3,30 +3,39 @@ package repo
 import (
 	"log"
 	"strconv"
+	"time"
 
-	"github.com/gomodule/redigo/redis"
+	"github.com/allegro/bigcache/v3"
 )
 
-var cache redis.Conn
+var cache *bigcache.BigCache
 
-var tokenExpiryTime = "86400"
+var tokenExpiryTime = 24 * time.Hour
 var tokenPrefix = "gir:user:"
 
 func InitCache() {
-	// Initialize the redis connection to a redis instance running on your local machine
-	conn, err := redis.DialURL("redis://localhost")
+	// Initialize the bigcache instance
+	config := bigcache.DefaultConfig(tokenExpiryTime)
+	config.CleanWindow = 1 * time.Hour // Adjust the cleanup interval as needed
+
+	var err error
+	cache, err = bigcache.NewBigCache(config)
 	if err != nil {
-		log.Printf(err.Error())
+		log.Printf("Error initializing cache: %v", err)
 	}
-	// Assign the connection to the package level `cache` variable
-	cache = conn
 }
 
-func AddUserToken(id int, sessionToken string) (reply interface{}, err error) {
-	return cache.Do("SETEX", tokenPrefix+strconv.Itoa(id), tokenExpiryTime, sessionToken)
+func AddUserToken(id int, sessionToken string) error {
+	key := tokenPrefix + strconv.Itoa(id)
+	return cache.Set(key, []byte(sessionToken))
 }
 
 func GetUserToken(id int) string {
-	token, _ := redis.String(cache.Do("GET", tokenPrefix+strconv.Itoa(id)))
-	return token
+	key := tokenPrefix + strconv.Itoa(id)
+	token, err := cache.Get(key)
+	if err != nil {
+		log.Printf("Error retrieving token: %v", err)
+		return ""
+	}
+	return string(token)
 }

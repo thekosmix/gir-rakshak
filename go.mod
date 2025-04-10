@@ -8,4 +8,7 @@ require (
 	github.com/gorilla/mux v1.7.3
 )
 
-require github.com/mattn/go-sqlite3 v1.14.17 // indirect
+require (
+	github.com/allegro/bigcache/v3 v3.1.0 // indirect
+	github.com/mattn/go-sqlite3 v1.14.17 // indirect
+)
